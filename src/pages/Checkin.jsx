@@ -7,7 +7,7 @@ import Heading from "../ui/Heading";
 import { useNavigate } from "react-router-dom";
 import Button from "../ui/Button";
 import useCheckin from "../features/check-in-out/useCheckin";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useSettings from "../features/settings/useSettings";
 import { formatCurrency } from "../helpers/formatCurrency";
 
@@ -84,6 +84,10 @@ function Checkin() {
     error: settingsError,
   } = useSettings();
 
+  useEffect(() => {
+    setConfirmPaid(booking?.isPaid ?? false);
+  }, [booking]);
+
   function handleBack() {
     if (window.history.length > 1) navigate(-1);
     else navigate("/bookings");
@@ -116,7 +120,7 @@ function Checkin() {
   const optionalBreakfastPrice =
     currentSettings.breakfastPrice * booking.numNights * booking.numGuests;
 
-  const paymentConfirmed = booking.isPaid || confirmPaid;
+  const paymentConfirmed = confirmPaid;
   return (
     <>
       <Row type="horizontal">
@@ -156,7 +160,7 @@ function Checkin() {
             id="confirm-paid"
             checked={paymentConfirmed}
             onChange={() => setConfirmPaid((current) => !current)}
-            disabled={booking.isPaid || isCheckingIn}
+            disabled={paymentConfirmed || isCheckingIn}
           />
           <label htmlFor="confirm-paid">
             I confirm that {booking.guests.fullName} has paid the total amount
