@@ -6,7 +6,7 @@ function fromToday(numDays, withTime = false) {
   return date.toISOString().slice(0, -1);
 }
 
-export const bookings = [
+const baseBookings = [
   // CABIN 001
   {
     created_at: fromToday(-20, true),
@@ -280,4 +280,44 @@ export const bookings = [
     numGuests: 7,
   },
 ];
+
+const cabinCapacities = [2, 2, 4, 4, 6, 6, 8, 10];
+const futureBookingNotes = [
+  '',
+  'Please prepare the cabin for a late evening arrival.',
+  'We would appreciate extra towels on arrival.',
+  'Celebrating a birthday during this stay.',
+  'Quiet cabin location preferred if possible.',
+  'One guest may arrive a few hours later than the rest of the group.',
+];
+
+function generateFutureBookings() {
+  const totalDays = 730;
+  const spacingDays = 3;
+  const bookingLength = 2;
+  const firstStartOffset = 30;
+
+  return Array.from({ length: Math.ceil(totalDays / spacingDays) * 8 }, (_, index) => {
+    const cabinId = (index % 8) + 1;
+    const slot = Math.floor(index / 8);
+    const maxGuests = cabinCapacities[cabinId - 1];
+    const startOffset = firstStartOffset + slot * spacingDays;
+    const leadTime = 2 + (index % 12) * 5;
+    const guestId = (index % 29) + 1;
+
+    return {
+      created_at: fromToday(startOffset - leadTime, true),
+      startDate: fromToday(startOffset),
+      endDate: fromToday(startOffset + bookingLength),
+      cabinId,
+      guestId,
+      hasBreakfast: index % 3 !== 0,
+      observations: futureBookingNotes[index % futureBookingNotes.length],
+      isPaid: index % 5 !== 0,
+      numGuests: Math.max(1, Math.min(maxGuests, 1 + (index % maxGuests))),
+    };
+  });
+}
+
+export const bookings = [...baseBookings, ...generateFutureBookings()];
 
