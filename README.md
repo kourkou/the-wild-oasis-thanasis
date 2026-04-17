@@ -31,7 +31,7 @@ A modern hotel management web application designed to streamline cabin bookings,
 
 * React
 * React Query (TanStack Query)
-* Styled Components / Tailwind *(adjust as needed)*
+* Styled Components / Tailwind
 
 
 **Other Tools**
