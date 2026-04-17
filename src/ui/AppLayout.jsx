@@ -1,7 +1,9 @@
+import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import styled from "styled-components";
+import useUser from "../features/authentication/useUser";
 
 const StyledAppLayout = styled.div`
   display: grid;
@@ -22,6 +24,20 @@ const Container = styled.div`
 `;
 
 function AppLayout() {
+  const { user } = useUser();
+
+  useEffect(() => {
+    const fullName = user?.user_metadata?.fullName;
+
+    document.title = fullName
+      ? `The Wild Oasis | ${fullName}`
+      : "The Wild Oasis";
+
+    return () => {
+      document.title = "The Wild Oasis";
+    };
+  }, [user]);
+
   return (
     <StyledAppLayout>
       <Sidebar />
